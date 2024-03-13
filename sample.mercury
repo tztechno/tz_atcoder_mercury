@@ -5,7 +5,66 @@ SakodaKazuki
 ########################################
 
 ########################################
+//abc336_a
+:- module main.
 
+:- interface.
+:- import_module io.
+:- pred main(io::di, io::uo) is det.
+
+:- implementation.
+:- import_module list, char, string, integer, math, float.
+main(!IO) :-
+	print("L", !IO),
+	read_line_as_string(X, !IO),
+	(
+		X = ok(S);
+		X = error(Err),
+		S = "0";
+		X = eof,
+		S = "0"
+	),
+	(
+		if string.replace(S, "\n", "", W)
+		then (
+				if string.to_int(W, Z)
+				then 
+					string.duplicate_char('o', Z, B),
+					print(B, !IO)
+				else print("", !IO)
+		)
+		else print("", !IO)
+	),
+	print("ng\n", !IO).
 ########################################
+//abc335_a
 
+:- module main.
+
+:- interface.
+:- import_module io.
+:- pred main(io::di, io::uo) is det.
+
+:- implementation.
+:- import_module list, char, string, integer, math, float.
+main(!IO) :-
+	read_line_as_string(X, !IO),
+	(
+		X = ok(S);
+		X = error(Err),
+		S = "0";
+		X = eof,
+		S = "0"
+	),
+	string.length(S, Num),
+	(
+	if integer.to_int(integer.integer(Num) - integer.integer(2), Num2)
+	then
+		(
+		if string.set_char('4', Num2, S, S2)
+		then print(S2, !IO)
+		else print("", !IO)
+		)
+	else print("", !IO)
+	).
 ########################################
