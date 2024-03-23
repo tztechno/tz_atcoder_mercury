@@ -1,31 +1,35 @@
-'use strict';
 
-var document = require('global/document');
-var hg = require('mercury');
-var h = require('mercury').h;
+######################################
 
-function App() {
-    return hg.state({
-        value: hg.value(0),
-        channels: {
-            clicks: incrementCounter
-        }
-    });
-}
+:- module main.
 
-function incrementCounter(state) {
-    state.value.set(state.value() + 1);
-}
+:- interface.
+:- import_module io.
+:- pred main(io::di, io::uo) is det.
 
-App.render = function render(state) {
-    return h('div.counter', [
-        'The state ', h('code', 'clickCount'),
-        ' has value: ' + state.value + '.', h('input.button', {
-            type: 'button',
-            value: 'Click me!',
-            'ev-click': hg.send(state.channels.clicks)
-        })
-    ]);
-};
+:- implementation.
 
-hg.app(document.body, App(), App.render);
+main(IO1, IO2) :-
+
+    write_string("Hello, world!\n", IO1, IO2).
+
+:- end_module main.
+
+######################################
+
+:- module main.
+
+:- interface.
+:- import_module io.
+:- pred main(io::di, io::uo) is det.
+
+:- implementation.
+:- import_module list, char, string, integer, math, float.
+
+main(IO1, IO2) :-
+
+    write_string("Hello, world!\n", IO1, IO2).
+
+:- end_module main.
+
+######################################
