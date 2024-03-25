@@ -1,0 +1,17 @@
+:- module main.
+
+:- interface.
+
+:- import_module io.
+
+:- pred main(io::di, io::uo) is det.
+
+:- implementation.
+
+:- import_module list, char, string, int, math, float.
+
+main(!IO) :-
+    Ans = 100 * 101 // 2,
+    io.write_int(Ans, !IO).
+
+:- end_module main.
