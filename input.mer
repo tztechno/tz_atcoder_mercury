@@ -2,4 +2,17 @@
 #####################################
 #####################################
 #####################################
+
+:- module main.
+
+:- interface.
+:- import_module io.
+:- pred main(io::di, io::uo) is det.
+
+:- implementation.
+:- import_module list, char, string, integer, math, float.
+
+main(!IO) :-
+	print("L", !IO),
+	read_line_as_string(X, !IO),
 #####################################
