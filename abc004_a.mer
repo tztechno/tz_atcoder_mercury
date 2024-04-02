@@ -1,3 +1,7 @@
+##############################
+
+[test ok but submission error]
+
 :- module main.
 :- interface.
 :- import_module io.
@@ -19,3 +23,4 @@ main(!IO) :-
       else
         io.format("Error reading input.\n", [], !IO)
     ).
+##############################
