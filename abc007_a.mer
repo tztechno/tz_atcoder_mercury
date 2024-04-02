@@ -1,0 +1,26 @@
+##############################################
+[test ok but submission error]
+
+:- module main.
+:- interface.
+:- import_module io.
+:- pred main(io::di, io::uo) is det.
+:- implementation.
+:- import_module list, char, string, int.
+
+main(!IO) :-
+    io.read_line_as_string(Result, !IO),
+    ( if Result = ok(X)
+      then
+        ( if string.to_int(X, N)
+          then
+            Ans = N-1,
+            io.format("%d\n\n", [i(Ans)], !IO)
+          else
+            io.format("%s\n\n", [s(X)], !IO)
+        )
+      else
+        io.format("Error reading input.\n\n", [], !IO)
+    ).
+
+##############################################
