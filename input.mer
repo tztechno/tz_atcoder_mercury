@@ -15,4 +15,5 @@
 main(!IO) :-
 	print("L", !IO),
 	read_line_as_string(X, !IO),
+	print(X, !IO)
 #####################################
