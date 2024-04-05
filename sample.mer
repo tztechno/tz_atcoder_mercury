@@ -1,9 +1,22 @@
-SakodaKazuki
-
 ########################################
 ########################################
 ########################################
 ########################################
 ########################################
 ########################################
+########################################
+:- pred io.read_char(io.result(char)::out, io::di, io::uo) is det.
+:- pred io.read_char(io.input_stream::in, io.result(char)::out,　io::di, io::uo) is det.
+########################################
+:- pred io.read_line_as_string(io.result(string)::out, io::di, io::uo) is det.
+:- pred io.read_line(io.input_stream::in, io.result(list(char))::out, io::di, io::uo) is det.
+########################################
+:- pred io.read_line(io.result(list(char))::out, io::di, io::uo) is det.
+########################################
+:- type string.poly_type ---> f(float); i(int); s(string); c(char).
+:- pred io.format(string::in, list(io.poly_type)::in, io::di, io::uo) is det.
+:- pred io.format(io.output_stream::in, string::in, list(io.poly_type)::in, io::di, io::uo) is det.
+########################################
+:- pred io.print(T::in, io::di, io::uo) is det.
+:- pred io.print(io.output_stream::in, T::in, io::di, io::uo) is det.
 ########################################
