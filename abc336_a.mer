@@ -2,6 +2,7 @@
 ----------------------
 input 3
 output Looong
+actual Lng ----- WA
 ----------------------
 
 :- module main.
