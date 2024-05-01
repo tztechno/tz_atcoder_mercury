@@ -1,23 +1,149 @@
-########################################
-https://mercury-memo.hatenablog.com/entry/2013/07/09/222803
-########################################
-########################################
-########################################
-########################################
-########################################
-########################################
-:- pred io.read_char(io.result(char)::out, io::di, io::uo) is det.
-:- pred io.read_char(io.input_stream::in, io.result(char)::out,　io::di, io::uo) is det.
-########################################
-:- pred io.read_line_as_string(io.result(string)::out, io::di, io::uo) is det.
-:- pred io.read_line(io.input_stream::in, io.result(list(char))::out, io::di, io::uo) is det.
-########################################
-:- pred io.read_line(io.result(list(char))::out, io::di, io::uo) is det.
-########################################
-:- type string.poly_type ---> f(float); i(int); s(string); c(char).
-:- pred io.format(string::in, list(io.poly_type)::in, io::di, io::uo) is det.
-:- pred io.format(io.output_stream::in, string::in, list(io.poly_type)::in, io::di, io::uo) is det.
-########################################
-:- pred io.print(T::in, io::di, io::uo) is det.
-:- pred io.print(io.output_stream::in, T::in, io::di, io::uo) is det.
-########################################
+################################################################
+
+https://mercury-memo.hatenablog.com/entry/2013/07/12/071629
+
+################################################################
+
+:- module calc.
+:- interface.
+:- import_module io.
+:- pred main(io::di, io::uo) is det.
+
+:- implementation.
+:- import_module int, list, string, char.
+
+%------------------------------
+% ユーティリティ
+%------------------------------
+
+:- pred printn(T::in, io::di, io::uo) is det.
+printn(X, !IO) :-
+    print(X, !IO),
+    nl(!IO). 
+
+%------------------------------
+% データ構造
+%------------------------------
+:- type expr
+    ---> eint(int)
+    ;    eadd(expr, expr)
+    ;    esub(expr, expr)
+    ;    emul(expr, expr)
+    ;    ediv(expr, expr).
+
+%------------------------------
+% パーサ
+%------------------------------
+
+:- type pst == list(char).
+
+% 空白の読み飛ばし
+:- pred skip_space(pst::in, pst::out) is det.
+skip_space(Input, Rest) :-
+    list.takewhile(is_whitespace, Input, _, Rest).
+
+% 整数の読み込み
+:- pred read_int(int::out, pst::in, pst::out) is semidet.
+read_int(N, Input, Rest) :-
+    list.takewhile(is_digit, Input, CList, Rest0),
+    string.from_char_list(CList, Str),
+    string.to_int(Str, N),
+    skip_space(Rest0, Rest).
+
+% 式
+:- pred parse_expr(expr::out, pst::in, pst::out) is semidet.
+parse_expr(Result) -->
+    parse_term(E1),
+    parse_expr2(E1, Result).
+
+:- pred parse_expr2(expr::in, expr::out, pst::in, pst::out) is semidet.
+parse_expr2(E1, Result) -->
+    (
+        ['+'] ->
+            skip_space,
+            parse_term(E2),
+            parse_expr2(eadd(E1, E2), Result)
+    ;
+        ['-'] ->
+            skip_space,
+            parse_term(E2),
+            parse_expr2(esub(E1, E2), Result)
+    ;
+        { Result = E1 }
+    ).
+
+% 項
+:- pred parse_term(expr::out, pst::in, pst::out) is semidet.
+parse_term(Result) -->
+    parse_factor(E1),
+    parse_term2(E1, Result).
+
+:- pred parse_term2(expr::in, expr::out, pst::in, pst::out) is semidet.
+parse_term2(E1, Result) -->
+    (
+        ['*'] ->
+            skip_space,
+            parse_factor(E2),
+            parse_term2(emul(E1, E2), Result)
+    ;
+        ['/'] ->
+            skip_space,
+            parse_factor(E2),
+            parse_term2(ediv(E1, E2), Result)
+    ;
+        { Result = E1 }
+    ).
+
+% 因子
+:- pred parse_factor(expr::out, pst::in, pst::out) is semidet.
+parse_factor(E1) -->
+    (
+        read_int(N) ->
+            { E1 = eint(N) }
+    ;
+        ['-'] -> 
+            skip_space,
+            parse_factor(E0),
+            { E1 = esub(eint(0), E0) }
+    ;
+        ['('],
+        skip_space,
+        parse_expr(E1),
+        [')'], skip_space
+    ).
+
+%------------------------------
+% 評価器
+%------------------------------
+
+:- pred eval(expr::in, int::out) is det.
+eval(eint(N), N).
+eval(eadd(E1, E2), N) :-
+    eval(E1, N1), eval(E2, N2), N = N1 + N2.
+eval(esub(E1, E2), N) :-
+    eval(E1, N1), eval(E2, N2), N = N1 - N2.
+eval(emul(E1, E2), N) :-
+    eval(E1, N1), eval(E2, N2), N = N1 * N2.
+eval(ediv(E1, E2), N) :-
+    eval(E1, N1), eval(E2, N2), N = div(N1, N2).
+
+%------------------------------
+% メイン
+%------------------------------
+
+main(!IO) :-
+    string.to_char_list("1 + 2 * 3 + 4", CList),
+    (
+        parse_expr(E, CList, []) -> 
+            print("Syntax Tree: ", !IO),
+            printn(E, !IO),
+            eval(E, N),
+            format("Result: %d\n", [i(N)], !IO)
+        ;
+            printn("Syntax Error", !IO)
+    ).
+
+:- end_module calc.
+
+################################################################
+
